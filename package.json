@@ -1,0 +1,27 @@
+{
+  "name": "artist-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio & CV website for an impressionist artist, with a private admin panel.",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22.9"
+  },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "dev": "node --watch --env-file-if-exists=.env src/server.js",
+    "create-admin": "node --env-file-if-exists=.env scripts/create-admin.js",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "better-sqlite3": "^13.2.0",
+    "cookie-session": "^2.1.1",
+    "ejs": "^7.0.2",
+    "express": "^4.22.3",
+    "helmet": "^8.3.0",
+    "multer": "^2.5.0",
+    "nodemailer": "^10.5.0",
+    "sharp": "^0.35.5"
+  }
+}
