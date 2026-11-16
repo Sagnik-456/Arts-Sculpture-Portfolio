@@ -1,0 +1,64 @@
+<%- include('_top') %>
+<header class="adm-head"><div><p class="adm-eyebrow">Website</p><h1>Site settings</h1></div></header>
+
+<form class="adm-form" method="post" action="/admin/settings">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="adm-grid">
+    <section class="adm-card adm-span-2">
+      <h2>Identity & home page</h2>
+      <div class="adm-row">
+        <label class="adm-field adm-grow"><span>Artist name</span><input name="artist_name" value="<%= s.artist_name %>" maxlength="80"></label>
+        <label class="adm-field adm-grow"><span>Role / one-liner</span><input name="artist_role" value="<%= s.artist_role %>" maxlength="140"></label>
+      </div>
+      <label class="adm-field"><span>Home headline</span><input name="hero_title" value="<%= s.hero_title %>" maxlength="140"></label>
+      <label class="adm-field"><span>Home sub-headline</span><input name="hero_subtitle" value="<%= s.hero_subtitle %>" maxlength="240"></label>
+      <label class="adm-field"><span>Hero artwork <small>big image on the home page</small></span>
+        <select name="hero_work_id"><option value="">Automatic (latest work)</option>
+          <% works.forEach(w => { %><option value="<%= w.id %>" <%= String(w.id) === String(s.hero_work_id) ? 'selected' : '' %>><%= w.title %></option><% }) %>
+        </select></label>
+    </section>
+
+    <section class="adm-card adm-span-2">
+      <h2>About & CV</h2>
+      <label class="adm-field"><span>Artist statement</span><textarea name="statement" rows="4"><%= s.statement %></textarea></label>
+      <label class="adm-field"><span>Biography</span><textarea name="bio" rows="7"><%= s.bio %></textarea></label>
+      <p class="adm-hint">For the lists below, write one entry per line as <code>Year | Description</code>, e.g. <code>2024 | Solo show, City Gallery</code></p>
+      <label class="adm-field"><span>Exhibitions</span><textarea name="cv_exhibitions" rows="6" class="adm-mono"><%= s.cv_exhibitions %></textarea></label>
+      <div class="adm-row">
+        <label class="adm-field adm-grow"><span>Education</span><textarea name="cv_education" rows="4" class="adm-mono"><%= s.cv_education %></textarea></label>
+        <label class="adm-field adm-grow"><span>Awards & press</span><textarea name="cv_awards" rows="4" class="adm-mono"><%= s.cv_awards %></textarea></label>
+      </div>
+    </section>
+
+    <section class="adm-card adm-span-2">
+      <h2>Contact details <small>shown on the contact page & footer</small></h2>
+      <div class="adm-row">
+        <label class="adm-field adm-grow"><span>E-mail <small>also receives enquiry notifications if e-mail sending is set up</small></span><input type="email" name="contact_email" value="<%= s.contact_email %>"></label>
+        <label class="adm-field adm-grow"><span>Phone / WhatsApp</span><input name="contact_phone" value="<%= s.contact_phone %>"></label>
+      </div>
+      <div class="adm-row">
+        <label class="adm-field adm-grow"><span>Location / studio note</span><input name="contact_location" value="<%= s.contact_location %>"></label>
+        <label class="adm-field adm-grow"><span>Instagram handle</span><input name="instagram" value="<%= s.instagram %>" placeholder="without @"></label>
+      </div>
+      <label class="adm-field"><span>Note above the contact form</span><textarea name="commission_note" rows="2"><%= s.commission_note %></textarea></label>
+    </section>
+  </div>
+  <div class="adm-savebar"><span class="adm-grow"></span><button class="adm-btn adm-btn-ink" type="submit">Save settings</button></div>
+</form>
+
+<form class="adm-form" method="post" action="/admin/password" id="security">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <section class="adm-card">
+    <h2>Login & security</h2>
+    <div class="adm-row">
+      <label class="adm-field adm-grow"><span>Username <small>leave blank to keep</small></span><input name="username" autocomplete="username"></label>
+      <label class="adm-field adm-grow"><span>Current password</span><input type="password" name="current" required autocomplete="current-password"></label>
+    </div>
+    <div class="adm-row">
+      <label class="adm-field adm-grow"><span>New password <small>min 10 characters</small></span><input type="password" name="next" required minlength="10" autocomplete="new-password"></label>
+      <label class="adm-field adm-grow"><span>Repeat new password</span><input type="password" name="confirm" required minlength="10" autocomplete="new-password"></label>
+    </div>
+    <button class="adm-btn adm-btn-ink" type="submit">Update login</button>
+  </section>
+</form>
+<%- include('_bottom') %>

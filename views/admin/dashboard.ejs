@@ -1,0 +1,50 @@
+<%- include('_top') %>
+<header class="adm-head">
+  <div><p class="adm-eyebrow">Welcome back</p><h1>Studio dashboard</h1></div>
+  <a class="adm-btn adm-btn-ink" href="/admin/works/new">+ Add new work</a>
+</header>
+
+<section class="adm-stats">
+  <a href="/admin/works" class="adm-stat"><b><%= stats.works %></b><span>Works (<%= stats.published %> published)</span></a>
+  <a href="/admin/categories" class="adm-stat"><b><%= stats.categories %></b><span>Categories</span></a>
+  <a href="/admin/messages" class="adm-stat adm-stat-yellow"><b><%= unread %></b><span>Unread enquiries · <%= stats.messages %> total</span></a>
+</section>
+
+<section class="adm-card">
+  <div class="adm-card-head"><h2>Post to a category</h2><a href="/admin/categories/new">+ New category</a></div>
+  <div class="adm-cat-quick">
+    <% categories.forEach(c => { %>
+      <a href="/admin/works/new?category=<%= c.id %>" class="adm-cat-chip">
+        <% if (c.cover) { %><img src="<%= c.cover.sm %>" alt=""><% } else { %><span class="adm-cat-ph"><%= c.name[0] %></span><% } %>
+        <span><b><%= c.name %></b><small><%= c.work_count %> published<%= c.visible ? '' : ' · hidden' %></small></span>
+        <em>+ Add</em>
+      </a>
+    <% }) %>
+  </div>
+</section>
+
+<div class="adm-two">
+  <section class="adm-card">
+    <div class="adm-card-head"><h2>Latest enquiries</h2><a href="/admin/messages">All →</a></div>
+    <% if (!recentMessages.length) { %><p class="adm-muted">No enquiries yet. They'll appear here when visitors use the contact form.</p><% } %>
+    <ul class="adm-list">
+      <% recentMessages.forEach(m => { %>
+        <li class="<%= m.is_read ? '' : 'is-unread' %>"><a href="/admin/messages/<%= m.id %>">
+          <b><%= m.name %></b><span><%= m.work_title ? 'About “' + m.work_title + '”' : (m.subject || m.body.slice(0, 60)) %></span><time><%= m.created_at.slice(0, 10) %></time>
+        </a></li>
+      <% }) %>
+    </ul>
+  </section>
+  <section class="adm-card">
+    <div class="adm-card-head"><h2>Recently edited</h2><a href="/admin/works">All works →</a></div>
+    <ul class="adm-list adm-list-works">
+      <% recentWorks.forEach(w => { %>
+        <li><a href="/admin/works/<%= w.id %>/edit">
+          <% if (w.cover) { %><img src="<%= w.cover.sm %>" alt=""><% } else { %><span class="adm-thumb-ph"></span><% } %>
+          <b><%= w.title %></b><span><%= w.category ? w.category.name : 'No category' %><%= w.published ? '' : ' · draft' %></span>
+        </a></li>
+      <% }) %>
+    </ul>
+  </section>
+</div>
+<%- include('_bottom') %>

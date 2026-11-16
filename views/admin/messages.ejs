@@ -1,0 +1,22 @@
+<%- include('_top') %>
+<header class="adm-head"><div><p class="adm-eyebrow">Inbox</p><h1>Enquiries</h1></div></header>
+<% if (!messages.length) { %>
+  <div class="adm-empty"><p>No enquiries yet. Messages sent through the website's contact form land here.</p></div>
+<% } else { %>
+<div class="adm-table-wrap">
+<table class="adm-table adm-inbox">
+  <thead><tr><th>From</th><th>About</th><th>Message</th><th>Received</th></tr></thead>
+  <tbody>
+    <% messages.forEach(m => { %>
+      <tr class="<%= m.is_read ? '' : 'is-unread' %>" data-href="/admin/messages/<%= m.id %>">
+        <td><a href="/admin/messages/<%= m.id %>"><b><%= m.name %></b></a><br><small><%= m.email %></small></td>
+        <td><%= m.work_title || m.subject || '—' %></td>
+        <td class="adm-snippet"><%= m.body.slice(0, 110) %><%= m.body.length > 110 ? '…' : '' %></td>
+        <td><time><%= m.created_at.replace('T', ' ').slice(0, 16) %></time></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+</div>
+<% } %>
+<%- include('_bottom') %>

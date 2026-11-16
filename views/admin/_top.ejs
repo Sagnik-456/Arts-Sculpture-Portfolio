@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title><%= title %> · Studio admin</title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body class="adm">
+<% const nav = [
+  ['/admin', 'Dashboard', '/'],
+  ['/admin/works', 'Works', '/works'],
+  ['/admin/categories', 'Categories', '/categories'],
+  ['/admin/messages', 'Enquiries', '/messages'],
+  ['/admin/settings', 'Settings', '/settings'],
+]; %>
+<aside class="adm-side">
+  <a class="adm-brand" href="/admin"><span class="adm-brand-name"><%= site.artist_name %></span><span class="adm-brand-sub">Studio admin</span></a>
+  <nav class="adm-nav">
+    <% nav.forEach(([href, label, p]) => { const active = p === '/' ? adminPath === '/' : adminPath.startsWith(p); %>
+      <a href="<%= href %>" class="<%= active ? 'is-active' : '' %>"><%= label %><% if (label === 'Enquiries' && unread) { %><span class="adm-badge"><%= unread %></span><% } %></a>
+    <% }) %>
+  </nav>
+  <a class="adm-btn adm-btn-yellow adm-side-cta" href="/admin/works/new">+ Add new work</a>
+  <div class="adm-side-foot">
+    <a href="/" target="_blank" rel="noopener">View website ↗</a>
+    <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="adm-link" type="submit">Sign out</button></form>
+  </div>
+</aside>
+<main class="adm-main">
+  <% if (flash) { %><div class="adm-flash adm-flash-<%= flash.type %>" role="status"><%= flash.text %></div><% } %>

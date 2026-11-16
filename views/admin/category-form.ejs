@@ -1,0 +1,19 @@
+<%- include('_top') %>
+<header class="adm-head">
+  <div><p class="adm-eyebrow"><a href="/admin/categories">Categories</a> /</p><h1><%= cat.id ? cat.name : 'New category' %></h1></div>
+  <% if (cat.id && cat.visible) { %><a class="adm-btn" href="/category/<%= cat.slug %>" target="_blank" rel="noopener">View on site ↗</a><% } %>
+</header>
+
+<form class="adm-form adm-form-narrow" method="post" action="<%= cat.id ? '/admin/categories/' + cat.id : '/admin/categories' %>">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <section class="adm-card">
+    <h2>Details</h2>
+    <label class="adm-field"><span>Name *</span><input name="name" value="<%= cat.name || '' %>" required maxlength="80" placeholder="e.g. Paintings"></label>
+    <label class="adm-field"><span>Short tagline <small>shown under the tile</small></span><input name="tagline" value="<%= cat.tagline || '' %>" maxlength="120" placeholder="e.g. Watercolour & mixed media"></label>
+    <label class="adm-field"><span>Introduction <small>shown at the top of the category page</small></span><textarea name="description" rows="5"><%= cat.description || '' %></textarea></label>
+    <label class="adm-check"><input type="checkbox" name="visible" value="1" <%= cat.visible ? 'checked' : '' %>> Visible on website</label>
+    <p class="adm-hint">The category's cover picture is picked automatically: it's the top-most (most recently added) work in this category.</p>
+  </section>
+  <div class="adm-savebar"><a class="adm-btn" href="/admin/categories">Cancel</a><span class="adm-grow"></span><button class="adm-btn adm-btn-ink" type="submit">Save category</button></div>
+</form>
+<%- include('_bottom') %>

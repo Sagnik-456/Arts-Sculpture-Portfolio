@@ -1,0 +1,84 @@
+<%- include('_top') %>
+<header class="adm-head">
+  <div><p class="adm-eyebrow"><a href="/admin/works">Works</a> /</p><h1><%= work.id ? work.title : 'New work' %></h1></div>
+  <% if (work.id && work.published) { %><a class="adm-btn" href="/work/<%= work.slug %>" target="_blank" rel="noopener">View on site ↗</a><% } %>
+</header>
+
+<form class="adm-form" method="post" action="<%= work.id ? '/admin/works/' + work.id : '/admin/works' %>" enctype="multipart/form-data">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="adm-grid">
+
+    <section class="adm-card adm-span-2">
+      <h2>Images</h2>
+      <% if (work.images && work.images.length) { %>
+        <p class="adm-muted">The image marked <b>Cover</b> is shown on cards. Add a caption under each image; lower numbers show first.</p>
+        <div class="adm-images">
+          <% work.images.forEach((img, i) => { %>
+            <div class="adm-image">
+              <img src="<%= img.sm %>" alt="">
+              <div class="adm-image-meta">
+                <label class="adm-radio"><input type="radio" name="cover_id" value="<%= img.id %>" <%= i === 0 ? 'checked' : '' %>> Cover</label>
+                <label class="adm-mini">#<input type="number" name="order_<%= img.id %>" value="<%= img.sort_order %>"></label>
+                <small><%= img.width %>×<%= img.height %>px</small>
+              </div>
+              <textarea name="caption_<%= img.id %>" rows="2" placeholder="Caption / detail under this image"><%= img.caption %></textarea>
+              <label class="adm-check adm-check-danger"><input type="checkbox" name="remove_<%= img.id %>" value="1"> Remove</label>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+      <label class="adm-drop adm-drop-lg"><input type="file" name="images" accept="image/*" multiple data-preview data-captions>
+        <span><b>Upload images</b> — drag & drop or click. JPG, PNG, WEBP, up to 25&nbsp;MB each.</span></label>
+      <div class="adm-previews"></div>
+    </section>
+
+    <section class="adm-card adm-span-2">
+      <h2>About the work</h2>
+      <div class="adm-row">
+        <label class="adm-field adm-grow"><span>Title *</span><input name="title" value="<%= work.title || '' %>" required maxlength="160"></label>
+        <label class="adm-field"><span>Category</span>
+          <select name="category_id">
+            <option value="">— none —</option>
+            <% categories.forEach(c => { %><option value="<%= c.id %>" <%= work.category_id === c.id ? 'selected' : '' %>><%= c.name %><%= c.visible ? '' : ' (hidden)' %></option><% }) %>
+          </select></label>
+      </div>
+      <label class="adm-field"><span>Medium</span><input name="medium" value="<%= work.medium || '' %>" placeholder="e.g. Watercolour on cotton paper"></label>
+      <fieldset class="adm-fieldset">
+        <legend>Artwork dimensions <small>(height × width × depth)</small></legend>
+        <div class="adm-row">
+          <label class="adm-field"><span>Height</span><input type="number" step="any" min="0" name="dim_h" value="<%= work.dim_h ?? '' %>"></label>
+          <label class="adm-field"><span>Width</span><input type="number" step="any" min="0" name="dim_w" value="<%= work.dim_w ?? '' %>"></label>
+          <label class="adm-field"><span>Depth <small>3D only</small></span><input type="number" step="any" min="0" name="dim_d" value="<%= work.dim_d ?? '' %>"></label>
+          <label class="adm-field"><span>Unit</span><select name="dim_unit"><% ['cm', 'mm', 'in', 'm'].forEach(u => { %><option <%= work.dim_unit === u ? 'selected' : '' %>><%= u %></option><% }) %></select></label>
+        </div>
+      </fieldset>
+      <label class="adm-field"><span>Short description <small>shown on the card & at the top of the work page</small></span>
+        <textarea name="description" rows="3" maxlength="4000"><%= work.description || '' %></textarea></label>
+      <label class="adm-field"><span>Essay <small>long-form text under the images</small></span>
+        <textarea name="essay" rows="14" class="adm-essay"><%= work.essay || '' %></textarea></label>
+      <p class="adm-hint">Formatting: blank line = new paragraph · <code>## Heading</code> · <code>&gt; Pull quote</code> · <code>**bold**</code> · <code>*italic*</code></p>
+    </section>
+
+    <section class="adm-card adm-span-2">
+      <h2>Publishing</h2>
+      <label class="adm-check"><input type="checkbox" name="published" value="1" <%= work.published ? 'checked' : '' %>> Published (visible on website)</label>
+      <label class="adm-check"><input type="checkbox" name="commission" value="1" <%= work.commission ? 'checked' : '' %>> Commission work (shown in the Commissions section on the home page)</label>
+      <p class="adm-hint">Images are shown in their own proportions, uncropped. Full-resolution originals stay private.</p>
+    </section>
+  </div>
+
+  <div class="adm-savebar">
+    <% if (work.id) { %>
+      <button class="adm-btn adm-btn-danger" type="submit" form="delete-work">Delete work</button>
+    <% } %>
+    <span class="adm-grow"></span>
+    <button class="adm-btn" type="submit" name="after" value="list">Save & back to list</button>
+    <button class="adm-btn adm-btn-ink" type="submit">Save</button>
+  </div>
+</form>
+<% if (work.id) { %>
+<form id="delete-work" method="post" action="/admin/works/<%= work.id %>/delete" data-confirm="Delete “<%= work.title %>” and all its images? This cannot be undone.">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+</form>
+<% } %>
+<%- include('_bottom') %>

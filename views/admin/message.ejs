@@ -1,0 +1,21 @@
+<%- include('_top') %>
+<header class="adm-head">
+  <div><p class="adm-eyebrow"><a href="/admin/messages">Enquiries</a> /</p><h1><%= m.name %></h1></div>
+  <a class="adm-btn adm-btn-ink" href="mailto:<%= m.email %>?subject=<%= encodeURIComponent('Re: ' + (m.work_title || m.subject || 'your enquiry')) %>">Reply by e-mail</a>
+</header>
+<section class="adm-card adm-message">
+  <dl class="adm-dl">
+    <dt>E-mail</dt><dd><a href="mailto:<%= m.email %>"><%= m.email %></a></dd>
+    <% if (m.phone) { %><dt>Phone</dt><dd><a href="tel:<%= m.phone %>"><%= m.phone %></a></dd><% } %>
+    <% if (m.work_title) { %><dt>About work</dt><dd><a href="/work/<%= m.work_slug %>" target="_blank" rel="noopener"><%= m.work_title %> ↗</a></dd><% } %>
+    <% if (m.subject) { %><dt>Subject</dt><dd><%= m.subject %></dd><% } %>
+    <dt>Received</dt><dd><%= m.created_at %> (UTC)</dd>
+  </dl>
+  <div class="adm-message-body"><%= m.body %></div>
+</section>
+<div class="adm-savebar">
+  <form method="post" action="/admin/messages/<%= m.id %>/delete" data-confirm="Delete this enquiry?"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="adm-btn adm-btn-danger">Delete</button></form>
+  <span class="adm-grow"></span>
+  <form method="post" action="/admin/messages/<%= m.id %>/unread"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><button class="adm-btn">Mark as unread</button></form>
+</div>
+<%- include('_bottom') %>

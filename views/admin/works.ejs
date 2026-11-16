@@ -1,0 +1,40 @@
+<%- include('_top') %>
+<header class="adm-head">
+  <div><p class="adm-eyebrow">Portfolio</p><h1>Works</h1></div>
+  <a class="adm-btn adm-btn-ink" href="/admin/works/new<%= catId ? '?category=' + catId : '' %>">+ Add new work</a>
+</header>
+
+<form class="adm-filter" method="get" action="/admin/works">
+  <div class="adm-tabs">
+    <a href="/admin/works" class="<%= !catId ? 'is-active' : '' %>">All</a>
+    <% categories.forEach(c => { %><a href="/admin/works?category=<%= c.id %>" class="<%= catId === c.id ? 'is-active' : '' %>"><%= c.name %></a><% }) %>
+  </div>
+  <% if (catId) { %><input type="hidden" name="category" value="<%= catId %>"><% } %>
+  <input type="search" name="q" value="<%= q %>" placeholder="Search titles…" aria-label="Search titles">
+</form>
+
+<% if (!works.length) { %>
+  <div class="adm-empty"><p>No works here yet.</p><a class="adm-btn adm-btn-yellow" href="/admin/works/new<%= catId ? '?category=' + catId : '' %>">+ Add the first one</a></div>
+<% } %>
+
+<div class="adm-work-grid">
+  <% works.forEach(w => { %>
+    <article class="adm-work <%= w.published ? '' : 'is-draft' %>">
+      <a href="/admin/works/<%= w.id %>/edit" class="adm-work-img">
+        <% if (w.cover) { %><img src="<%= w.cover.sm %>" alt="" loading="lazy"><% } else { %><span>No image</span><% } %>
+        <% if (w.commission) { %><em class="adm-star" title="Commission work">Commission</em><% } %>
+      </a>
+      <div class="adm-work-body">
+        <a href="/admin/works/<%= w.id %>/edit"><b><%= w.title %></b></a>
+        <small><%= w.category ? w.category.name : 'No category' %> · <%= w.images.length %> image<%= w.images.length === 1 ? '' : 's' %></small>
+        <div class="adm-work-actions">
+          <form method="post" action="/admin/works/<%= w.id %>/toggle"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="field" value="published"><input type="hidden" name="back" value="/admin/works<%= catId ? '?category=' + catId : '' %>">
+            <button class="adm-pill <%= w.published ? 'adm-pill-ok' : '' %>" title="Click to toggle"><%= w.published ? 'Published' : 'Draft' %></button></form>
+          <form method="post" action="/admin/works/<%= w.id %>/toggle"><input type="hidden" name="_csrf" value="<%= csrfToken %>"><input type="hidden" name="field" value="commission"><input type="hidden" name="back" value="/admin/works<%= catId ? '?category=' + catId : '' %>">
+            <button class="adm-pill <%= w.commission ? 'adm-pill-yellow' : '' %>" title="Click to toggle"><%= w.commission ? '✓ Commission' : '+ Commission' %></button></form>
+        </div>
+      </div>
+    </article>
+  <% }) %>
+</div>
+<%- include('_bottom') %>
