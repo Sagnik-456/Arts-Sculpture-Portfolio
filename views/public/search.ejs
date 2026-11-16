@@ -1,0 +1,35 @@
+<%- include('../partials/head', { bodyClass: 'pg-search' }) %>
+
+<section class="results wrap" aria-labelledby="search-h">
+  <header class="results__head">
+    <p class="eyebrow">Search the studio</p>
+    <% if (!q) { %>
+      <h1 class="results__h" id="search-h">What are you <em>looking for?</em></h1>
+    <% } else if (works.length) { %>
+      <h1 class="results__h" id="search-h"><span class="results__n"><%= works.length %></span> <%= works.length === 1 ? 'work' : 'works' %> for <em>“<%= q %>”</em></h1>
+    <% } else { %>
+      <h1 class="results__h" id="search-h">Nothing matched <em>“<%= q %>”</em></h1>
+    <% } %>
+    <form class="search search--big" action="/search" method="get" role="search">
+      <label class="sr-only" for="page-q">Search works</label>
+      <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <input id="page-q" class="search__input" type="search" name="q" value="<%= q %>" placeholder="Try “sunset”, “bronze” or “stoneware”" maxlength="80">
+      <button class="search__go" type="submit">Search</button>
+    </form>
+  </header>
+
+  <% if (works.length) { %>
+    <ul class="grid grid--wide" aria-label="Search results">
+      <% works.forEach((x, i) => { %>
+        <li class="grid__cell grid__cell--<%= x.display_size || 'normal' %>"><%- include('../partials/work-card', { w: x, variant: 'grid', showCategory: true, eager: i < 4 }) %></li>
+      <% }) %>
+    </ul>
+  <% } else { %>
+    <div class="results__empty">
+      <p class="results__hint"><%= q ? 'Try a broader word — a medium, a colour or a subject — or browse by medium instead:' : 'Search titles, mediums and descriptions — or start with a medium:' %></p>
+      <%- include('../partials/tiles', { cats: navCategories, compact: true }) %>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>

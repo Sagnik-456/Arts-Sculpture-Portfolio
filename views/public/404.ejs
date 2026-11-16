@@ -1,0 +1,26 @@
+<%- include('../partials/head', { bodyClass: 'pg-404' }) %>
+
+<section class="lost wrap" aria-labelledby="lost-h">
+  <div class="lost__block">
+    <p class="lost__code" aria-hidden="true">4<span>0</span>4</p>
+    <div class="lost__copy">
+      <h1 class="lost__h" id="lost-h">This page has dissolved <em>into the mist.</em></h1>
+      <p>Like a wet-on-wet sky, it ran somewhere we didn’t plan. The link may be old, or the work may have found a new home.</p>
+      <div class="lost__actions">
+        <a class="btn btn--ink btn--lg" href="/">Back to the studio</a>
+        <a class="btn btn--paper btn--lg" href="/search">Search the works</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (navCategories.length) { %>
+<section class="block wrap" aria-labelledby="lost-cats">
+  <div class="block__head">
+    <h2 class="block__h" id="lost-cats">Or wander by <em>medium</em></h2>
+  </div>
+  <%- include('../partials/tiles', { cats: navCategories, compact: true }) %>
+</section>
+<% } %>
+
+<%- include('../partials/footer') %>

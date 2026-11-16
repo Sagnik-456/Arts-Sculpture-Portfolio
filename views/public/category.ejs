@@ -1,0 +1,59 @@
+<%- include('../partials/head', { bodyClass: 'pg-category', metaDescription: category.name + (category.tagline ? ' — ' + category.tagline : '') + ' by ' + site.artist_name }) %>
+
+<div class="shelf wrap">
+  <aside class="side" aria-label="All categories">
+    <p class="side__label">Mediums</p>
+    <ul class="side__list">
+      <% categories.forEach((c, i) => { const active = c.id === category.id; %>
+        <li>
+          <a class="side__item<%= active ? ' is-active' : '' %>" href="<%= c.url %>"<%- active ? ' aria-current="page"' : '' %>>
+            <span class="side__thumb" style="--tile-bg: <%= c.accent || ['#fde68a', '#f6d7b0', '#e7e3cf', '#f3d9c4', '#efe4b8'][i % 5] %>">
+              <% if (c.cover) { %><img src="<%= c.cover.sm %>" alt="" width="48" height="48" loading="lazy"><% } else { %><span aria-hidden="true"><%= c.name.charAt(0) %></span><% } %>
+            </span>
+            <span class="side__name"><%= c.name %></span>
+            <span class="side__n"><%= c.work_count || '–' %></span>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+    <a class="side__cta" href="/contact">
+      <strong>Looking for something specific?</strong>
+      <span>Commissions are open — ask away <span aria-hidden="true">→</span></span>
+    </a>
+  </aside>
+
+  <div class="shelf__main">
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <ol><li><a href="/">Home</a></li><li aria-current="page"><%= category.name %></li></ol>
+    </nav>
+    <header class="cat-head">
+      <div>
+        <h1 class="cat-head__h"><%= category.name %></h1>
+        <% if (category.tagline) { %><p class="cat-head__tag"><%= category.tagline %></p><% } %>
+      </div>
+      <p class="cat-head__count"><strong><%= works.length %></strong> <%= works.length === 1 ? 'work' : 'works' %></p>
+    </header>
+    <% if (category.description) { %><div class="prose cat-head__desc"><%- formatText(category.description) %></div><% } %>
+
+    <% if (works.length) { %>
+      <ul class="grid" aria-label="<%= category.name %>">
+        <% works.forEach((x, i) => { %>
+          <li class="grid__cell grid__cell--<%= x.display_size || 'normal' %>"><%- include('../partials/work-card', { w: x, variant: 'grid', eager: i < 4 }) %></li>
+        <% }) %>
+      </ul>
+    <% } else { %>
+      <div class="empty">
+        <span class="empty__wash" aria-hidden="true"></span>
+        <p class="empty__k">Nothing hanging here yet</p>
+        <h2 class="empty__h">New works are on the <em>easel</em> — check back soon.</h2>
+        <p class="empty__p">Want first look when <%= category.name.toLowerCase() %> arrive, or have a piece in mind? Drop me a line.</p>
+        <div class="empty__actions">
+          <a class="btn btn--ink" href="/contact">Get in touch</a>
+          <a class="btn btn--paper" href="/#categories">Browse other mediums</a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

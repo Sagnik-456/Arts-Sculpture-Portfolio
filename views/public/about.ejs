@@ -1,0 +1,63 @@
+<%
+  const cv = [
+    ['Exhibitions', parseCvLines(site.cv_exhibitions)],
+    ['Education', parseCvLines(site.cv_education)],
+    ['Awards & recognition', parseCvLines(site.cv_awards)],
+  ].filter((s) => s[1].length);
+%>
+<%- include('../partials/head', { bodyClass: 'pg-about', metaDescription: 'About ' + site.artist_name + ' — ' + site.artist_role + '. Biography, exhibitions, education and awards.' }) %>
+
+<section class="intro wrap" aria-labelledby="about-h">
+  <div class="intro__name-wrap">
+    <p class="eyebrow">About &amp; CV</p>
+    <h1 class="intro__name" id="about-h"><%= site.artist_name %></h1>
+    <p class="intro__role"><%= site.artist_role %></p>
+  </div>
+  <% if (site.statement) { %>
+    <blockquote class="intro__quote"><p><%= site.statement %></p></blockquote>
+  <% } %>
+</section>
+
+<section class="bio wrap" aria-labelledby="bio-h">
+  <div class="bio__grid">
+    <h2 class="bio__h" id="bio-h">The <em>practice</em></h2>
+    <div class="bio__body prose prose--lg">
+      <% if (site.bio) { %><%- formatText(site.bio) %><% } else { %><p>A full biography is on its way.</p><% } %>
+    </div>
+  </div>
+</section>
+
+<% if (cv.length) { %>
+<section class="cv wrap" aria-labelledby="cv-h">
+  <div class="cv__head">
+    <h2 class="block__h" id="cv-h">Curriculum <em>vitae</em></h2>
+    <a class="btn btn--paper" href="/contact">Request a full CV</a>
+  </div>
+  <div class="cv__cols">
+    <% cv.forEach(([label, items]) => { %>
+      <div class="cv__sec" data-reveal>
+        <h3 class="cv__label"><%= label %> <span><%= items.length %></span></h3>
+        <ol class="timeline">
+          <% items.forEach((it) => { %>
+            <li><span class="timeline__when"><%= it.when || '—' %></span><span class="timeline__what"><%= it.what %></span></li>
+          <% }) %>
+        </ol>
+      </div>
+    <% }) %>
+  </div>
+</section>
+<% } %>
+
+<% if (categories.length) { %>
+<section class="block wrap" aria-labelledby="med-h">
+  <div class="block__head">
+    <% const words = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten']; const n = categories.length; %>
+    <h2 class="block__h" id="med-h"><%= words[n - 1] || n %> <em><%= n === 1 ? 'medium' : 'mediums' %></em>, one hand</h2>
+    <p class="block__sub">Explore the work by the material it was made in.</p>
+  </div>
+  <%- include('../partials/tiles', { cats: categories }) %>
+</section>
+<% } %>
+
+<%- include('../partials/cta') %>
+<%- include('../partials/footer') %>

@@ -1,0 +1,118 @@
+<%
+  const v = values || {};
+  const subject = v.subject || (work ? 'Enquiry: ' + work.title : '');
+  const ig = site.instagram ? site.instagram.replace(/^@/, '') : '';
+%>
+<%- include('../partials/head', { bodyClass: 'pg-contact', metaDescription: 'Contact ' + site.artist_name + ' about a work, a commission or an exhibition.' }) %>
+
+<section class="contact wrap" aria-labelledby="contact-h">
+  <header class="contact__head">
+    <p class="eyebrow">Enquiries &amp; commissions</p>
+    <h1 class="contact__h" id="contact-h"><% if (sent) { %>Thank you — <em>talk soon.</em><% } else { %>Let’s make <em>something</em> happen.<% } %></h1>
+    <% if (site.commission_note && !sent) { %><p class="contact__lede"><%= site.commission_note %></p><% } %>
+  </header>
+
+  <div class="contact__grid">
+    <div class="contact__main">
+      <% if (sent) { %>
+        <div class="sent" role="status">
+          <span class="sent__mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M12 25l8 8 16-18" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <h2 class="sent__h">Your message is on its way.</h2>
+          <p>I read every enquiry personally and usually reply within a few days. In the meantime, have a wander through the studio.</p>
+          <div class="sent__actions">
+            <a class="btn btn--ink" href="/#categories">Back to the works</a>
+            <a class="btn btn--paper" href="/about">About &amp; CV</a>
+          </div>
+        </div>
+      <% } else { %>
+        <% if (work) { %>
+          <a class="about-work" href="<%= work.url %>">
+            <span class="about-work__img">
+              <% if (work.cover) { %><img src="<%= work.cover.sm %>" alt="<%= work.title %>" loading="lazy"><% } else { %><span aria-hidden="true"><%= work.title.charAt(0) %></span><% } %>
+            </span>
+            <span class="about-work__text">
+              <span class="about-work__k">You’re enquiring about</span>
+              <strong class="about-work__t"><%= work.title %></strong>
+              <span class="about-work__m"><%= [work.medium, work.dims].filter(Boolean).join(' · ') %></span>
+            </span>
+          </a>
+        <% } %>
+
+        <% if (errors && errors.length) { %>
+          <div class="alert" role="alert" tabindex="-1" data-focus-on-load>
+            <strong>Almost there — please check:</strong>
+            <ul><% errors.forEach((e) => { %><li><%= e %></li><% }) %></ul>
+          </div>
+        <% } %>
+
+        <form class="form" method="post" action="/contact" novalidate>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="work_id" value="<%= work ? work.id : '' %>">
+          <div class="hp" aria-hidden="true">
+            <label for="f-website">Leave this field empty</label>
+            <input id="f-website" type="text" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="form__row form__row--2">
+            <div class="field">
+              <label for="f-name">Your name <span class="req" aria-hidden="true">*</span></label>
+              <input id="f-name" name="name" type="text" required maxlength="120" autocomplete="name" value="<%= v.name || '' %>">
+            </div>
+            <div class="field">
+              <label for="f-email">E-mail <span class="req" aria-hidden="true">*</span></label>
+              <input id="f-email" name="email" type="email" required maxlength="160" autocomplete="email" value="<%= v.email || '' %>">
+            </div>
+          </div>
+          <div class="form__row form__row--2">
+            <div class="field">
+              <label for="f-phone">Phone <span class="opt">optional</span></label>
+              <input id="f-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" value="<%= v.phone || '' %>">
+            </div>
+            <div class="field">
+              <label for="f-subject">Subject <span class="opt">optional</span></label>
+              <input id="f-subject" name="subject" type="text" maxlength="160" value="<%= subject %>" placeholder="Commission, exhibition, a specific work…">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-message">Message <span class="req" aria-hidden="true">*</span></label>
+            <textarea id="f-message" name="message" rows="7" required maxlength="5000" placeholder="Tell me what caught your eye, where it might live, any sizes or timelines…"><%= v.message || '' %></textarea>
+          </div>
+          <div class="form__foot">
+            <p class="form__hint"><span aria-hidden="true">*</span> Required. Your details are only used to reply to you.</p>
+            <button class="btn btn--yellow btn--lg" type="submit">Send message <span aria-hidden="true">→</span></button>
+          </div>
+        </form>
+      <% } %>
+    </div>
+
+    <aside class="contact__side" aria-label="Other ways to reach the studio">
+      <div class="side-card">
+        <h2 class="side-card__h">Studio details</h2>
+        <ul class="details">
+          <% if (site.contact_email) { %>
+            <li><span class="details__k">E-mail</span><a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a></li>
+          <% } %>
+          <% if (site.contact_phone) { %>
+            <li><span class="details__k">Phone</span><a href="tel:<%= site.contact_phone.replace(/[^\d+]/g, '') %>"><%= site.contact_phone %></a></li>
+          <% } %>
+          <% if (ig) { %>
+            <li><span class="details__k">Instagram</span><a href="https://instagram.com/<%= encodeURIComponent(ig) %>" target="_blank" rel="noopener">@<%= ig %></a></li>
+          <% } %>
+          <% if (site.contact_location) { %>
+            <li><span class="details__k">Visit</span><span><%= site.contact_location %></span></li>
+          <% } %>
+        </ul>
+      </div>
+      <div class="side-card side-card--yellow">
+        <h2 class="side-card__h">Good to include</h2>
+        <ul class="ticks">
+          <li>The work (or medium) that caught your eye</li>
+          <li>Where it might hang or stand</li>
+          <li>For commissions: size, subject &amp; timeline</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

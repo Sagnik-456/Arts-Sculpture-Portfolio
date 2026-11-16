@@ -1,0 +1,133 @@
+<%
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  // Headline accents: *word* becomes serif italic; otherwise the clause after an em dash does.
+  const accent = (s) => {
+    const e = esc(s);
+    if (/\*(.+?)\*/.test(e)) return e.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    const m = e.match(/^(.*?)\s*[—–]\s*(.+)$/);
+    return m ? `${m[1]}&nbsp;<span class="dash">—</span> <em>${m[2]}</em>` : e;
+  };
+  const totalWorks = categories.reduce((n, c) => n + (c.work_count || 0), 0);
+  const liveCats = categories.filter((c) => c.work_count);
+  const promoCats = liveCats.filter((c) => c.cover).slice().sort((a, b) => b.work_count - a.work_count).slice(0, 2);
+  const filledRows = rows.filter((r) => r.works.length);
+  const emptyCats = rows.filter((r) => !r.works.length).map((r) => r.category);
+  const heroCat = heroWork && heroWork.category;
+%>
+<%- include('../partials/head', { bodyClass: 'pg-home' }) %>
+
+<section class="hero wrap" aria-labelledby="hero-h">
+  <div class="hero__block">
+    <div class="hero__copy">
+      <p class="eyebrow eyebrow--ink"><%= site.artist_role %></p>
+      <h1 class="hero__h" id="hero-h"><%- accent(site.hero_title || site.artist_name) %></h1>
+      <% if (site.hero_subtitle) { %><p class="hero__sub"><%= site.hero_subtitle %></p><% } %>
+      <div class="hero__actions">
+        <a class="btn btn--ink btn--lg" href="#categories">Explore works <span aria-hidden="true">↓</span></a>
+        <a class="btn btn--paper btn--lg" href="/contact">Commission / Enquire</a>
+      </div>
+      <% if (totalWorks) { %>
+        <p class="hero__stats"><strong><%= totalWorks %></strong> works across <strong><%= liveCats.length %></strong> <%= liveCats.length === 1 ? 'medium' : 'mediums' %><% if (categories.length > liveCats.length) { %> · <%= categories.length - liveCats.length %> more on the easel<% } %></p>
+      <% } %>
+    </div>
+
+    <% if (heroWork && heroWork.cover) { %>
+      <figure class="hero__print">
+        <a class="print" href="<%= heroWork.url %>" aria-label="View <%= heroWork.title %>">
+          <span class="print__tape" aria-hidden="true"></span>
+          <img src="<%= heroWork.cover.lg %>"
+               srcset="<%= heroWork.cover.md %> 1100w, <%= heroWork.cover.lg %> 2000w"
+               sizes="(max-width: 900px) 92vw, 46vw"
+               alt="<%= heroWork.title %>"
+               width="<%= heroWork.cover.width || '' %>" height="<%= heroWork.cover.height || '' %>"
+               fetchpriority="high" decoding="async">
+        </a>
+        <figcaption class="label">
+          <span class="label__k">On the wall</span>
+          <a class="label__title" href="<%= heroWork.url %>"><%= heroWork.title %></a>
+          <span class="label__meta"><%= heroWork.medium || '' %><% if (heroCat) { %><% if (heroWork.medium) { %> · <% } %><%= heroCat.name %><% } %></span>
+        </figcaption>
+      </figure>
+    <% } else { %>
+      <div class="hero__quote" aria-hidden="<%= site.statement ? 'false' : 'true' %>">
+        <% if (site.statement) { %><blockquote><p><%= site.statement %></p></blockquote><% } %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<% if (promoCats.length || site.commission_note) { %>
+<section class="promos wrap" aria-label="Highlights">
+  <% promoCats.forEach((c, i) => { %>
+    <a class="promo promo--<%= i === 0 ? 'paper' : 'ink' %>" href="<%= c.url %>" data-reveal style="--d: <%= i %>">
+      <span class="promo__text">
+        <span class="promo__k"><%= c.tagline || 'Collection' %></span>
+        <span class="promo__h"><%= c.name %></span>
+        <span class="promo__go">Browse <%= c.work_count %> <%= c.work_count === 1 ? 'work' : 'works' %> <span aria-hidden="true">→</span></span>
+      </span>
+      <span class="promo__img"><img src="<%= c.cover.md %>" srcset="<%= c.cover.sm %> 560w, <%= c.cover.md %> 1100w" sizes="(max-width: 900px) 40vw, 14vw" alt="" loading="lazy" decoding="async"></span>
+    </a>
+  <% }) %>
+  <a class="promo promo--yellow" href="#commissions" data-reveal style="--d: <%= promoCats.length %>">
+    <span class="promo__text">
+      <span class="promo__k">Now booking</span>
+      <span class="promo__h">Commissions <em>open</em></span>
+      <span class="promo__go">Tell me your idea <span aria-hidden="true">→</span></span>
+    </span>
+    <span class="promo__wash" aria-hidden="true"></span>
+  </a>
+</section>
+<% } %>
+
+<section class="block wrap" id="categories" aria-labelledby="cat-h">
+  <div class="block__head" data-reveal>
+    <h2 class="block__h" id="cat-h">Browse by <em>medium</em></h2>
+    <p class="block__sub"><%= categories.length > 1 ? 'Different materials, the same chase after light' : 'Chasing the same light' %> — pick a medium and wander in.</p>
+  </div>
+  <%- include('../partials/tiles', { cats: categories }) %>
+</section>
+
+<div class="rows wrap">
+  <div class="commissions" id="commissions">
+    <% if (commissions.length) { %>
+      <%- include('../partials/row', { rowId: 'row-commissions', heading: 'Commission <em>works</em>', tagline: 'Pieces made to order for collectors, homes and spaces.', seeAll: null, works: commissions, showCategory: true, hideCommission: true, trackLabel: 'Commission works' }) %>
+    <% } %>
+    <aside class="commission-band<%= commissions.length ? '' : ' commission-band--solo' %>" aria-labelledby="commission-band-h" data-reveal>
+      <div class="commission-band__text">
+        <p class="commission-band__k">Commissions open</p>
+        <h2 class="commission-band__h" id="commission-band-h"><%- commissions.length ? 'Want one made <em>for you?</em>' : 'Commission <em>a piece</em>' %></h2>
+        <% if (site.commission_note) { %><p class="commission-band__p"><%= site.commission_note %></p><% } %>
+      </div>
+      <a class="btn btn--ink btn--lg" href="/contact">Start a commission <span aria-hidden="true">→</span></a>
+    </aside>
+  </div>
+  <% filledRows.forEach((r) => { %>
+    <%- include('../partials/row', { rowId: 'row-' + r.category.slug, heading: esc(r.category.name), tagline: r.category.tagline, seeAll: r.category.url, seeAllLabel: r.category.name, works: r.works, showCategory: false, trackLabel: r.category.name }) %>
+  <% }) %>
+  <% if (emptyCats.length) { %>
+    <aside class="easel" data-reveal>
+      <span class="easel__k">On the easel</span>
+      <p class="easel__txt">
+        <% emptyCats.forEach((c, i) => { %><a href="<%= c.url %>"><%= c.name %></a><%= i < emptyCats.length - 2 ? ', ' : (i === emptyCats.length - 2 ? ' and ' : '') %><% }) %>
+        — new work coming soon.
+      </p>
+      <a class="pill pill--ink" href="/contact">Get notified</a>
+    </aside>
+  <% } %>
+</div>
+
+<% if (site.statement) { %>
+<section class="teaser wrap" aria-labelledby="teaser-h" data-reveal>
+  <h2 class="sr-only" id="teaser-h">Artist statement</h2>
+  <figure class="teaser__fig">
+    <blockquote class="teaser__q"><p><%= site.statement %></p></blockquote>
+    <figcaption class="teaser__by">
+      <span>— <%= site.artist_name %></span>
+      <a class="see-all" href="/about">Read the full story &amp; CV <span aria-hidden="true">→</span></a>
+    </figcaption>
+  </figure>
+</section>
+<% } %>
+
+<%- include('../partials/cta') %>
+<%- include('../partials/footer') %>

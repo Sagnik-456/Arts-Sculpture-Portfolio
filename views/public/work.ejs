@@ -1,0 +1,103 @@
+<%
+  const cat = work.category;
+  const imgs = (work.images && work.images.length) ? work.images : (work.cover ? [work.cover] : []);
+  const main = imgs[0] || null;
+  const specs = [['Medium', work.medium], ['Dimensions', work.dims]].filter((s) => s[1]);
+%>
+<%- include('../partials/head', { bodyClass: 'pg-work', metaDescription: work.title + (work.medium ? ' — ' + work.medium : '') + ' by ' + site.artist_name }) %>
+
+<div class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <% if (cat) { %><li><a href="/category/<%= cat.slug %>"><%= cat.name %></a></li><% } %>
+      <li aria-current="page"><%= work.title %></li>
+    </ol>
+  </nav>
+</div>
+
+<article class="piece wrap">
+  <div class="piece__gallery" data-gallery>
+    <% if (main) { %>
+      <figure class="stage">
+        <a class="stage__frame<%= work.display_fit === 'contain' ? ' is-contain' : '' %>" href="<%= main.lg %>" data-stage data-index="0" aria-label="Open full-size image of <%= work.title %>">
+          <img data-stage-img
+               src="<%= main.lg %>"
+               srcset="<%= main.md %> 1100w, <%= main.lg %> 2000w"
+               sizes="(max-width: 980px) 94vw, 58vw"
+               alt="<%= work.title %>"
+               width="<%= main.width || '' %>" height="<%= main.height || '' %>"
+               fetchpriority="high" decoding="async">
+          <span class="stage__zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        <figcaption class="stage__cap" data-stage-cap<%= main.caption ? '' : ' hidden' %>><%= main.caption %></figcaption>
+      </figure>
+      <% if (imgs.length > 1) { %>
+        <ul class="thumbs" aria-label="More views">
+          <% imgs.forEach((im, i) => { %>
+            <li>
+              <a class="thumb<%= i === 0 ? ' is-active' : '' %>" href="<%= im.lg %>"
+                 data-thumb data-index="<%= i %>" data-md="<%= im.md %>" data-lg="<%= im.lg %>"
+                 data-w="<%= im.width || '' %>" data-h="<%= im.height || '' %>" data-caption="<%= im.caption || '' %>"
+                 <%- i === 0 ? 'aria-current="true"' : '' %>
+                 aria-label="View image <%= i + 1 %> of <%= imgs.length %><%= im.caption ? ': ' + im.caption : '' %>">
+                <img src="<%= im.sm %>" alt="" loading="lazy" decoding="async">
+              </a>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <span hidden data-thumb data-index="0" data-md="<%= main.md %>" data-lg="<%= main.lg %>" data-w="<%= main.width || '' %>" data-h="<%= main.height || '' %>" data-caption="<%= main.caption || '' %>"></span>
+      <% } %>
+    <% } else { %>
+      <div class="stage stage--empty"><span aria-hidden="true"><%= work.title.charAt(0) %></span><p>Photographs coming soon</p></div>
+    <% } %>
+  </div>
+
+  <aside class="piece__info">
+    <div class="info">
+      <% if (cat) { %><a class="chip chip--cat" href="/category/<%= cat.slug %>"><%= cat.name %></a><% } %>
+      <% if (work.commission) { %><span class="tag tag--star tag--inline">Commission work</span><% } %>
+      <h1 class="info__h"><%= work.title %></h1>
+      <% if (specs.length) { %>
+        <dl class="specs">
+          <% specs.forEach(([k, val]) => { %><div><dt><%= k %></dt><dd><%= val %></dd></div><% }) %>
+        </dl>
+      <% } %>
+      <% if (work.description) { %><div class="prose info__desc"><%- formatText(work.description) %></div><% } %>
+      <a class="btn btn--yellow btn--xl btn--block" href="/contact?work=<%= work.id %>">Enquire about this work <span aria-hidden="true">→</span></a>
+      <div class="info__row">
+        <button class="linkbtn" type="button" data-share hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          <span data-share-label>Copy link</span>
+        </button>
+        <% if (cat) { %><a class="linkbtn" href="/category/<%= cat.slug %>">← All <%= cat.name.toLowerCase() %></a><% } %>
+        <% if (isAdmin) { %><a class="linkbtn" href="/admin/works/<%= work.id %>/edit">Edit in admin ↗</a><% } %>
+      </div>
+      <p class="info__note">Every piece is an original. Enquiries about availability, exhibition loans or similar commissions are welcome.</p>
+    </div>
+  </aside>
+</article>
+
+<% if (work.essay && work.essay.trim()) { %>
+<section class="essay wrap" aria-labelledby="essay-h">
+  <div class="essay__inner">
+    <header class="essay__head">
+      <p class="eyebrow">From the studio</p>
+      <h2 class="essay__h" id="essay-h">About <em><%= work.title %></em></h2>
+    </header>
+    <div class="essay__body">
+      <%- formatText(work.essay) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (related.length) { %>
+  <div class="rows wrap">
+    <%- include('../partials/row', { rowId: 'row-related', heading: 'More from <em>' + (cat ? cat.name.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch])) : 'the studio') + '</em>', tagline: cat && cat.tagline, seeAll: cat ? '/category/' + cat.slug : null, seeAllLabel: cat ? cat.name : '', works: related, showCategory: false, trackLabel: 'More works' }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/cta') %>
+<%- include('../partials/footer') %>
