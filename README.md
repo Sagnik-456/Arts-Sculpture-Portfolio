@@ -52,7 +52,7 @@ and `*italic*` italics.
 ## Security
 
 - The password is stored as a bcrypt hash. Login attempts and contact form posts are rate-limited.
-- All forms use CSRF tokens. Cookies are httpOnly and SameSite, and also Secure in production.
+- All forms use CSRF tokens. Cookies are http Only and SameSite, and also Secure in production.
 - There's a strict Content-Security-Policy (no inline scripts) and a honeypot field against contact-form spam.
 - Uploaded files are re-encoded with sharp, so anything that isn't a real image is rejected.
 
