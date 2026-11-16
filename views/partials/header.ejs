@@ -1,0 +1,55 @@
+<%
+  const onPath = (p) => path === p || path.startsWith(p + '/');
+  const initial = String(site.artist_name || '?').trim().charAt(0).toUpperCase();
+%>
+<header class="hdr">
+  <div class="hdr__bar wrap">
+    <a class="brand" href="/" aria-label="<%= site.artist_name %> — home">
+      <span class="brand__mark" aria-hidden="true"><%= initial %></span>
+      <span class="brand__name"><%= site.artist_name %></span>
+    </a>
+
+    <form class="search" action="/search" method="get" role="search">
+      <label class="sr-only" for="hdr-q">Search works</label>
+      <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      <input id="hdr-q" class="search__input" type="search" name="q" value="<%= locals.q || '' %>" placeholder="Search watercolours, bronze, clay…" autocomplete="off" maxlength="80">
+      <button class="search__go" type="submit">Search</button>
+    </form>
+
+    <nav class="nav" aria-label="Main">
+      <details class="nav__works" data-dropdown>
+        <summary class="nav__link<%= path.startsWith('/category') || path.startsWith('/work') ? ' is-active' : '' %>">Works <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></summary>
+        <div class="menu">
+          <p class="menu__label">Browse by medium</p>
+          <ul class="menu__list">
+            <% navCategories.forEach((c) => { %>
+              <li>
+                <a class="menu__item<%= path === c.url ? ' is-active' : '' %>" href="<%= c.url %>">
+                  <span class="menu__thumb"<% if (!c.cover) { %> style="background:<%= c.accent || '#fde68a' %>"<% } %>>
+                    <% if (c.cover) { %><img src="<%= c.cover.sm %>" alt="" width="44" height="44" loading="lazy"><% } else { %><span aria-hidden="true"><%= c.name.charAt(0) %></span><% } %>
+                  </span>
+                  <span class="menu__text"><strong><%= c.name %></strong><small><%= c.work_count ? c.work_count + (c.work_count === 1 ? ' work' : ' works') : 'Coming soon' %></small></span>
+                </a>
+              </li>
+            <% }) %>
+          </ul>
+        </div>
+      </details>
+      <a class="nav__link<%= onPath('/about') ? ' is-active' : '' %>" href="/about"<%- onPath('/about') ? ' aria-current="page"' : '' %>>About &amp; CV</a>
+      <a class="nav__link<%= onPath('/contact') ? ' is-active' : '' %>" href="/contact"<%- onPath('/contact') ? ' aria-current="page"' : '' %>>Contact</a>
+    </nav>
+
+    <a class="btn btn--yellow hdr__cta" href="/contact">Enquire</a>
+  </div>
+
+  <nav class="chips wrap" aria-label="Categories">
+    <ul class="chips__list">
+      <% navCategories.forEach((c) => { %>
+        <li><a class="chip<%= path === c.url ? ' is-active' : '' %>" href="<%= c.url %>"<%- path === c.url ? ' aria-current="page"' : '' %>><%= c.name %></a></li>
+      <% }) %>
+      <li class="chips__sep" aria-hidden="true"></li>
+      <li><a class="chip chip--plain<%= onPath('/about') ? ' is-active' : '' %>" href="/about">About &amp; CV</a></li>
+      <li><a class="chip chip--plain<%= onPath('/contact') ? ' is-active' : '' %>" href="/contact">Contact</a></li>
+    </ul>
+  </nav>
+</header>

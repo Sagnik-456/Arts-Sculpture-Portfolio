@@ -1,0 +1,36 @@
+<%#
+  Work card. Pass { w: Work, variant?: 'row' | 'grid', showCategory?: bool, eager?: bool }
+  The title link stretches over the whole card; the Enquire pill is a separate link (no nested anchors).
+%><%
+  const v = locals.variant || 'grid';
+  const sizeClass = v === 'grid' && w.display_size && w.display_size !== 'normal' ? ' card--' + w.display_size : '';
+  const meta = w.medium || '';
+  const sizes = v === 'row' ? '(max-width: 640px) 60vw, 380px'
+    : (w.display_size === 'wide' || w.display_size === 'large') ? '(max-width: 640px) 100vw, 50vw'
+    : '(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 25vw';
+%>
+<article class="card card--<%= v %><%= sizeClass %><%= w.commission ? ' is-commission' : '' %>">
+  <div class="card__media<%= w.display_fit === 'contain' ? ' is-contain' : '' %>" style="aspect-ratio: <%= w.ratio %>">
+    <% if (w.cover) { %>
+      <img src="<%= w.cover.md %>"
+           srcset="<%= w.cover.sm %> 560w, <%= w.cover.md %> 1100w"
+           sizes="<%= sizes %>"
+           alt="<%= w.title %>"
+           width="<%= w.cover.width || '' %>" height="<%= w.cover.height || '' %>"
+           style="object-fit: <%= w.display_fit === 'contain' ? 'contain' : 'cover' %>"
+           <%- locals.eager ? '' : 'loading="lazy" ' %>decoding="async">
+    <% } else { %>
+      <span class="card__ph" aria-hidden="true"><%= w.title.charAt(0) %></span>
+    <% } %>
+    <% if (w.commission && !locals.hideCommission) { %><span class="tag tag--star">Commission</span><% } %>
+  </div>
+  <div class="card__body">
+    <% if (locals.showCategory && w.category) { %><p class="card__cat"><%= w.category.name %></p><% } %>
+    <h3 class="card__title"><a class="card__link" href="<%= w.url %>"><%= w.title %></a></h3>
+    <% if (meta) { %><p class="card__meta"><%= meta %></p><% } %>
+    <div class="card__foot">
+      <span class="card__dims"><%= w.dims || '' %></span>
+      <a class="pill" href="/contact?work=<%= w.id %>" aria-label="Enquire about <%= w.title %>">Enquire</a>
+    </div>
+  </div>
+</article>

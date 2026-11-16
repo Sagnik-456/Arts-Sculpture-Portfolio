@@ -1,0 +1,32 @@
+<%#
+  Horizontal scrolling row. Pass { rowId, heading (HTML-safe string you control), tagline?, seeAll?, works, showCategory? }
+%>
+<section class="row" aria-labelledby="<%= rowId %>-h" data-row data-reveal>
+  <div class="row__head">
+    <div>
+      <h2 class="row__title" id="<%= rowId %>-h"><%- heading %></h2>
+      <% if (locals.tagline) { %><p class="row__tag"><%= tagline %></p><% } %>
+    </div>
+    <div class="row__tools">
+      <% if (locals.seeAll) { %><a class="see-all" href="<%= seeAll %>">See all<span class="sr-only"> <%= locals.seeAllLabel || '' %></span> <span aria-hidden="true">→</span></a><% } %>
+      <div class="row__arrows" hidden>
+        <button class="arrow" type="button" data-row-prev aria-label="Scroll back"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="arrow" type="button" data-row-next aria-label="Scroll forward"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </div>
+  <ul class="row__track" data-row-track tabindex="0" aria-label="<%= locals.trackLabel || 'Works' %> — scroll horizontally">
+    <% works.forEach((x) => { %>
+      <li class="row__item"><%- include('work-card', { w: x, variant: 'row', showCategory: locals.showCategory, hideCommission: locals.hideCommission }) %></li>
+    <% }) %>
+    <% if (locals.seeAll) { %>
+      <li class="row__item row__more">
+        <a class="more" href="<%= seeAll %>">
+          <span class="more__k">See the full collection</span>
+          <span class="more__h"><%= locals.seeAllLabel || 'See all' %></span>
+          <span class="more__go" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</section>

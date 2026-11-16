@@ -1,0 +1,26 @@
+<%#
+  Category tile wall. Pass { cats: [Category], compact?: bool }
+  Tiles without a cover get a painted placeholder: accent colour (or a warm fallback) + a big serif initial.
+%><%
+  const fallbacks = ['#fde68a', '#f6d7b0', '#e7e3cf', '#f3d9c4', '#efe4b8'];
+%>
+<ul class="tiles<%= locals.compact ? ' tiles--compact' : '' %>" data-reveal>
+  <% cats.forEach((c, i) => { const bg = c.accent || fallbacks[i % fallbacks.length]; %>
+    <li class="tile<%= c.work_count ? '' : ' is-empty' %>" style="--tile-bg: <%= bg %>; --i: <%= i %>">
+      <a class="tile__link" href="<%= c.url %>">
+        <span class="tile__media">
+          <% if (c.cover) { %>
+            <img src="<%= c.cover.md %>" srcset="<%= c.cover.sm %> 560w, <%= c.cover.md %> 1100w" sizes="(max-width: 640px) 50vw, 20vw" alt="" loading="lazy" decoding="async">
+          <% } else { %>
+            <span class="tile__ph" aria-hidden="true"><%= c.name.charAt(0) %></span>
+          <% } %>
+        </span>
+        <span class="tile__body">
+          <span class="tile__name"><%= c.name %></span>
+          <% if (c.tagline) { %><span class="tile__tag"><%= c.tagline %></span><% } %>
+          <span class="tile__count<%= c.work_count ? '' : ' is-soon' %>"><%= c.work_count ? c.work_count + (c.work_count === 1 ? ' work' : ' works') : 'Coming soon' %></span>
+        </span>
+      </a>
+    </li>
+  <% }) %>
+</ul>

@@ -1,0 +1,12 @@
+<section class="cta wrap" aria-labelledby="cta-h" data-reveal>
+  <div class="cta__inner">
+    <div class="cta__text">
+      <h2 class="cta__h" id="cta-h">Seen something <em>you love?</em></h2>
+      <% if (site.commission_note) { %><p class="cta__note"><%= site.commission_note %></p><% } %>
+    </div>
+    <div class="cta__actions">
+      <a class="btn btn--yellow btn--lg" href="/contact">Start an enquiry <span aria-hidden="true">→</span></a>
+      <% if (site.contact_email) { %><a class="cta__mail" href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a><% } %>
+    </div>
+  </div>
+</section>

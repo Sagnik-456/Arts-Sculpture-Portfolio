@@ -1,0 +1,41 @@
+</main>
+<footer class="ftr">
+  <div class="wrap ftr__grid">
+    <div class="ftr__brand">
+      <a class="ftr__name" href="/"><%= site.artist_name %></a>
+      <p class="ftr__role"><%= site.artist_role %></p>
+      <a class="btn btn--yellow" href="/contact">Enquire about a work</a>
+    </div>
+    <nav class="ftr__col" aria-label="Works">
+      <h2 class="ftr__h">Works</h2>
+      <ul>
+        <% navCategories.forEach((c) => { %>
+          <li><a href="<%= c.url %>"><%= c.name %></a><% if (!c.work_count) { %> <span class="ftr__soon">soon</span><% } %></li>
+        <% }) %>
+      </ul>
+    </nav>
+    <nav class="ftr__col" aria-label="Studio">
+      <h2 class="ftr__h">Studio</h2>
+      <ul>
+        <li><a href="/about">About &amp; CV</a></li>
+        <li><a href="/contact">Commissions</a></li>
+        <li><a href="/search">Search the archive</a></li>
+        <li><a href="/admin"><%= isAdmin ? 'Admin panel' : 'Admin login' %></a></li>
+      </ul>
+    </nav>
+    <div class="ftr__col">
+      <h2 class="ftr__h">Get in touch</h2>
+      <ul>
+        <% if (site.contact_email) { %><li><a href="mailto:<%= site.contact_email %>"><%= site.contact_email %></a></li><% } %>
+        <% if (site.contact_phone) { %><li><a href="tel:<%= site.contact_phone.replace(/[^\d+]/g, '') %>"><%= site.contact_phone %></a></li><% } %>
+        <% if (site.instagram) { const ig = site.instagram.replace(/^@/, ''); %><li><a href="https://instagram.com/<%= encodeURIComponent(ig) %>" rel="noopener" target="_blank">Instagram @<%= ig %></a></li><% } %>
+        <% if (site.contact_location) { %><li class="ftr__muted"><%= site.contact_location %></li><% } %>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap ftr__base">
+    <p>© <%= new Date().getFullYear() %> <%= site.artist_name %>. All works shown are original and protected by copyright.</p>
+  </div>
+</footer>
+</body>
+</html>

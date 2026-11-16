@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title ? title + ' · ' : '' %><%= site.artist_name %></title>
+  <meta name="description" content="<%= locals.metaDescription || (site.artist_name + ' — ' + site.artist_role + '. ' + (site.hero_subtitle || '')) %>">
+  <meta name="theme-color" content="#f6cf3a">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/site.css">
+  <script src="/static/js/site.js" defer></script>
+</head>
+<body class="<%= locals.bodyClass || '' %>">
+<a class="skip" href="#main">Skip to content</a>
+<%- include('header') %>
+<main id="main" tabindex="-1">
