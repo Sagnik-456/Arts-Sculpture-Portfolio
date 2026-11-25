@@ -20,6 +20,7 @@
   <div class="piece__gallery" data-gallery>
     <% if (main) { %>
       <figure class="stage">
+        <div class="stage__wrap" data-stage-wrap>
         <a class="stage__frame<%= work.display_fit === 'contain' ? ' is-contain' : '' %>" href="<%= main.lg %>" data-stage data-index="0" aria-label="Open full-size image of <%= work.title %>">
           <img data-stage-img
                src="<%= main.lg %>"
@@ -30,6 +31,11 @@
                fetchpriority="high" decoding="async">
           <span class="stage__zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         </a>
+        <% if (imgs.length > 1) { %>
+          <button class="stage__nav stage__nav--prev" type="button" data-stage-prev aria-label="Previous image"><span class="stage__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+          <button class="stage__nav stage__nav--next" type="button" data-stage-next aria-label="Next image"><span class="stage__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <% } %>
+        </div>
         <figcaption class="stage__cap" data-stage-cap<%= main.caption ? '' : ' hidden' %>><%= main.caption %></figcaption>
       </figure>
       <% if (imgs.length > 1) { %>

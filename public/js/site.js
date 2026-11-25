@@ -119,6 +119,25 @@
       t.addEventListener('click', function (e) { e.preventDefault(); show(k); });
     });
 
+    /* "<" / ">" buttons on the left and right edges of the main image */
+    var prevBtn = $('[data-stage-prev]', gal);
+    var nextBtn = $('[data-stage-next]', gal);
+    if (prevBtn) prevBtn.addEventListener('click', function () { show(current - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { show(current + 1); });
+    /* swipe on touch screens */
+    var wrap = $('[data-stage-wrap]', gal);
+    if (wrap && items.length > 1) {
+      var sx = null, swiped = false;
+      wrap.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; swiped = false; }, { passive: true });
+      wrap.addEventListener('touchend', function (e) {
+        if (sx === null) return;
+        var dx = e.changedTouches[0].clientX - sx;
+        if (Math.abs(dx) > 50) { swiped = true; show(current + (dx < 0 ? 1 : -1)); }
+        sx = null;
+      });
+      wrap.addEventListener('click', function (e) { if (swiped) { e.preventDefault(); e.stopPropagation(); swiped = false; } }, true);
+    }
+
     /* lightbox */
     var lb = null, lbImg, lbCap, lbCount, lbPrev, lbNext, lastFocus = null;
 
