@@ -17,7 +17,6 @@
            sizes="<%= sizes %>"
            alt="<%= w.title %>"
            width="<%= w.cover.width || '' %>" height="<%= w.cover.height || '' %>"
-           style="object-fit: <%= w.display_fit === 'contain' ? 'contain' : 'cover' %>"
            <%- locals.eager ? '' : 'loading="lazy" ' %>decoding="async">
     <% } else { %>
       <span class="card__ph" aria-hidden="true"><%= w.title.charAt(0) %></span>

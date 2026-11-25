@@ -480,7 +480,7 @@ main { display: block; outline: none; overflow-x: clip; }
 }
 .card:hover, .card:focus-within { transform: translate(-3px, -3px); box-shadow: var(--hard); border-color: var(--ink); }
 .card__media { position: relative; overflow: hidden; border-radius: 13px; background: var(--paper-2); }
-.card__media img { width: 100%; height: 100%; display: block; transition: transform .5s var(--ease); }
+.card__media img { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .5s var(--ease); }
 .card:hover .card__media img { transform: scale(1.035); }
 .card__media.is-contain { background: var(--paper); box-shadow: inset 0 0 0 1px var(--line); }
 .card__media.is-contain img { padding: 5%; }
@@ -965,7 +965,8 @@ body.lb-open { overflow: hidden; }
   :root { --hdr-h: 64px; --row-h: 250px; }
 
   /* header: brand row scrolls away, search + chips stay pinned */
-  .hdr { top: -58px; }
+  .hdr { top: -48px; }  /* leaves a 10px gap above the pinned search bar */
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hdr__bar {
     grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'brand cta' 'search search';
     gap: 10px 12px; min-height: 0; padding-top: 10px; padding-bottom: 10px;
@@ -1031,6 +1032,12 @@ body.lb-open { overflow: hidden; }
 
 @media (max-width: 640px) {
   :root { --row-h: 220px; --r-xl: 24px; --r-lg: 20px; }
+
+  /* every card and work image fits inside the phone screen */
+  .card--row .card__media, .grid .card__media { max-width: calc(100vw - 2 * var(--gut) - 14px); }
+  .card--row .card__media img, .grid .card__media img { object-fit: contain; }
+  .stage__frame { padding: 10px; }
+  .stage__frame img { max-height: max(240px, calc(100svh - 280px)); }
   .hero__block { padding: 26px 20px 34px; border-radius: 24px; }
   .hero__h { font-size: clamp(40px, 11.6vw, 60px); }
   .hero__actions .btn { flex: 1 1 auto; }
