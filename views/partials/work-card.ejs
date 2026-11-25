@@ -22,7 +22,7 @@
     <% } else { %>
       <span class="card__ph" aria-hidden="true"><%= w.title.charAt(0) %></span>
     <% } %>
-    <% if (w.commission && !locals.hideCommission) { %><span class="tag tag--star">Commission</span><% } %>
+    <% if (w.commission && !locals.hideCommission) { %><span class="tag tag--star"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .8l1.6 3.3 3.6.5-2.6 2.5.6 3.6L6 9l-3.2 1.7.6-3.6L.8 4.6l3.6-.5z" fill="currentColor"/></svg>Commissioned</span><% } %>
   </div>
   <div class="card__body">
     <% if (locals.showCategory && w.category) { %><p class="card__cat"><%= w.category.name %></p><% } %>
